@@ -1,0 +1,51 @@
+{
+  "name": "kitsune",
+  "version": "0.1.0",
+  "description": "Kitsune (狐) — a lightweight, many-faced fingerprint browser: per-profile anti-detection fingerprints + custom proxy protocols (HTTP/SOCKS5/Shadowsocks/V2Ray/Trojan/SSH).",
+  "type": "module",
+  "keywords": [
+    "fingerprint-browser",
+    "antidetect",
+    "anti-detection",
+    "playwright",
+    "proxy",
+    "privacy",
+    "multi-account",
+    "browser-automation",
+    "shadowsocks",
+    "xray",
+    "socks5"
+  ],
+  "author": "WanJihe (https://github.com/ManifoldCaffe)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ManifoldCaffe/kitsune.git"
+  },
+  "homepage": "https://github.com/ManifoldCaffe/kitsune#readme",
+  "bugs": {
+    "url": "https://github.com/ManifoldCaffe/kitsune/issues"
+  },
+  "bin": {
+    "kitsune": "src/cli.js",
+    "fpb": "src/cli.js"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/cli.js",
+    "gui": "electron electron/main.js",
+    "web": "node src/cli.js web",
+    "postinstall": "playwright install chromium"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "playwright-core": "^1.47.0",
+    "playwright": "^1.47.0"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0"
+  }
+}

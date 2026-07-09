@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <title>Kitsune</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🦊</span>
+      <span>Kitsune <em class="brand-cjk">狐</em></span>
+    </div>
+    <div class="topbar-actions">
+      <button id="btn-kernels" class="btn ghost" title="Manage browser & protocol kernels">Kernels</button>
+      <button id="btn-open-data" class="btn ghost" title="Open profiles data directory">Data dir</button>
+      <button id="btn-new" class="btn primary">+ New profile</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <span>Profiles</span>
+        <span id="profile-count" class="count">0</span>
+      </div>
+      <ul id="profile-list" class="profile-list"></ul>
+    </aside>
+
+    <section class="content">
+      <!-- Detail view -->
+      <div id="detail" class="panel hidden">
+        <div class="panel-head">
+          <div>
+            <h2 id="d-name">—</h2>
+            <div id="d-sub" class="muted mono"></div>
+          </div>
+          <span id="d-status" class="status-pill">stopped</span>
+        </div>
+
+        <div class="launch-row">
+          <input id="d-url" class="input grow" type="text" value="https://abrahamjuliot.github.io/creepjs/" />
+          <button id="btn-launch" class="btn primary">Launch</button>
+          <button id="btn-stop" class="btn danger hidden">Stop</button>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Identity</div>
+            <dl id="d-identity" class="kv"></dl>
+          </div>
+          <div class="card">
+            <div class="card-title">Proxy</div>
+            <dl id="d-proxy" class="kv"></dl>
+          </div>
+        </div>
+
+        <details class="fp-details">
+          <summary>Full fingerprint (JSON)</summary>
+          <pre id="d-fp" class="mono json"></pre>
+        </details>
+
+        <div class="detail-actions">
+          <button id="btn-edit" class="btn ghost">Edit</button>
+          <button id="btn-delete" class="btn danger-ghost">Delete profile</button>
+        </div>
+      </div>
+
+      <!-- Create / edit form (tabbed) -->
+      <div id="form" class="panel form-panel hidden">
+        <div class="panel-head"><h2 id="form-title">New profile</h2></div>
+
+        <nav class="tabs">
+          <button class="tab active" data-tab="basic">Basic</button>
+          <button class="tab" data-tab="proxy">Proxy</button>
+          <button class="tab" data-tab="accounts">Accounts</button>
+          <button class="tab" data-tab="fp">Fingerprint</button>
+          <button class="tab" data-tab="adv">Advanced</button>
+        </nav>
+
+        <!-- Basic -->
+        <section class="tab-body" data-tab="basic">
+          <label class="field"><span>Name <em id="f-name-count" class="muted"></em></span>
+            <input id="f-name" class="input" type="text" maxlength="100" placeholder="e.g. us-account-1" /></label>
+          <div class="field-row">
+            <label class="field"><span>Browser kernel</span><select id="f-engine" class="input"></select></label>
+            <label class="field"><span>Operating system</span><select id="f-os" class="input"></select></label>
+          </div>
+          <label class="field"><span>Device preset</span><select id="f-preset" class="input"></select></label>
+          <label class="field"><span>User-Agent</span>
+            <select id="f-ua-mode" class="input mode"><option value="auto">Auto (from kernel + OS)</option><option value="custom">Custom</option></select>
+            <textarea id="f-ua" class="input mono" rows="2" data-when="custom" placeholder="Mozilla/5.0 …"></textarea></label>
+          <label class="field"><span>Cookies (JSON array)</span>
+            <textarea id="f-cookies" class="input mono" rows="4" placeholder='[{"name":"SID","value":"…","domain":".google.com","path":"/"}]'></textarea></label>
+          <label class="field"><span>Note <em id="f-note-count" class="muted"></em></span>
+            <textarea id="f-note" class="input" rows="2" maxlength="20000"></textarea></label>
+        </section>
+
+        <!-- Proxy -->
+        <section class="tab-body hidden" data-tab="proxy">
+          <label class="field"><span>Proxy protocol</span><select id="f-proxy-type" class="input"></select></label>
+          <div id="f-proxy-fields" class="proxy-fields"></div>
+          <div class="field-row">
+            <label class="field"><span>IP query channel</span>
+              <select id="f-ipquery" class="input"><option value="ip-api">IP-API</option><option value="ipwhois">ipwho.is</option></select></label>
+            <div class="field"><span>&nbsp;</span><button id="btn-check-proxy" class="btn">Check proxy</button></div>
+          </div>
+          <div id="proxy-result" class="proxy-result hidden"></div>
+        </section>
+
+        <!-- Accounts -->
+        <section class="tab-body hidden" data-tab="accounts">
+          <div class="card-title">Startup tabs (opened on launch)</div>
+          <div id="f-tabs" class="mini-list"></div>
+          <button id="btn-add-tab" class="btn sm">+ Add tab URL</button>
+          <div class="card-title" style="margin-top:18px">Accounts</div>
+          <div id="f-accounts" class="mini-list"></div>
+          <button id="btn-add-account" class="btn sm">+ Add account</button>
+        </section>
+
+        <!-- Fingerprint -->
+        <section class="tab-body hidden" data-tab="fp">
+          <label class="field"><span>WebRTC</span>
+            <select id="f-webrtc" class="input">
+              <option value="forward">Forward</option><option value="replace">Replace</option>
+              <option value="real">Real</option><option value="disable">Disable</option><option value="proxy">Proxy UDP</option>
+            </select></label>
+
+          <div class="field-row">
+            <label class="field"><span>Timezone</span>
+              <select id="f-tz-mode" class="input mode"><option value="ip">Based on IP</option><option value="real">Real</option><option value="custom">Custom</option></select>
+              <input id="f-tz" class="input" data-when="custom" placeholder="America/New_York" /></label>
+            <label class="field"><span>Language</span>
+              <select id="f-lang-mode" class="input mode"><option value="ip">Based on IP</option><option value="custom">Custom</option></select>
+              <input id="f-lang" class="input" data-when="custom" placeholder="en-US,en" /></label>
+          </div>
+
+          <div class="field-row">
+            <label class="field"><span>UI language</span>
+              <select id="f-uilang-mode" class="input mode"><option value="language">Based on language</option><option value="real">Real</option><option value="custom">Custom</option></select>
+              <input id="f-uilang" class="input" data-when="custom" placeholder="en-US" /></label>
+            <label class="field"><span>Geolocation</span>
+              <select id="f-geo-mode" class="input mode"><option value="ip">Based on IP</option><option value="custom">Custom</option><option value="block">Block</option></select>
+              <select id="f-geo-perm" class="input"><option value="ask">Ask each time</option><option value="allow">Always allow</option></select></label>
+          </div>
+          <div class="field-row" data-geo-custom>
+            <label class="field"><span>Latitude</span><input id="f-geo-lat" class="input" type="number" step="any" /></label>
+            <label class="field"><span>Longitude</span><input id="f-geo-lon" class="input" type="number" step="any" /></label>
+          </div>
+
+          <div class="field-row">
+            <label class="field"><span>Resolution</span>
+              <select id="f-res-mode" class="input mode"><option value="ua">Predefined (from UA)</option><option value="custom">Custom</option></select></label>
+            <div class="field" data-when-res="custom"><span>W × H</span>
+              <div class="wh"><input id="f-res-w" class="input" type="number" placeholder="1920" /><span>×</span><input id="f-res-h" class="input" type="number" placeholder="1080" /></div></div>
+          </div>
+
+          <label class="field"><span>Fonts</span>
+            <select id="f-fonts-mode" class="input mode"><option value="default">Default (OS set)</option><option value="custom">Custom</option></select>
+            <textarea id="f-fonts" class="input mono" rows="2" data-when="custom" placeholder="Arial, Verdana, …"></textarea></label>
+
+          <div class="card-title" style="margin-top:8px">Hardware noise</div>
+          <div class="noise-grid">
+            <label class="chk"><input type="checkbox" id="n-canvas" checked /> Canvas</label>
+            <label class="chk"><input type="checkbox" id="n-webglImage" checked /> WebGL image</label>
+            <label class="chk"><input type="checkbox" id="n-audio" checked /> AudioContext</label>
+            <label class="chk"><input type="checkbox" id="n-mediaDevices" checked /> Media devices</label>
+            <label class="chk"><input type="checkbox" id="n-clientRects" checked /> ClientRects</label>
+            <label class="chk"><input type="checkbox" id="n-speechVoices" checked /> SpeechVoices</label>
+          </div>
+
+          <label class="field" style="margin-top:14px"><span>WebGL metadata</span>
+            <select id="f-webgl-mode" class="input mode"><option value="custom">Custom</option><option value="real">Real</option></select></label>
+          <div class="field-row" data-when-webgl="custom">
+            <label class="field"><span>Vendor</span><select id="f-webgl-vendor" class="input"></select></label>
+            <label class="field"><span>Renderer</span><select id="f-webgl-renderer" class="input"></select></label>
+          </div>
+
+          <div class="field-row">
+            <label class="field"><span>WebGPU</span>
+              <select id="f-webgpu" class="input"><option value="webgl">Based on WebGL</option><option value="real">Real</option><option value="disable">Disable</option></select></label>
+            <label class="field chk-field"><span>Random fingerprint</span>
+              <label class="chk"><input type="checkbox" id="f-random" /> New random fingerprint each launch</label></label>
+          </div>
+        </section>
+
+        <!-- Advanced -->
+        <section class="tab-body hidden" data-tab="adv">
+          <label class="field"><span>Seed (determines the fingerprint)</span>
+            <div class="wh"><input id="f-seed" class="input mono" readonly /><button id="btn-reseed" class="btn sm">Regenerate</button></div></label>
+          <p class="muted" style="font-size:12px">The seed is fixed per profile so the fingerprint stays identical across relaunches. Regenerate to roll a brand-new (but still stable) identity.</p>
+        </section>
+
+        <div class="form-actions">
+          <button id="btn-save" class="btn primary">Save</button>
+          <button id="btn-cancel" class="btn ghost">Cancel</button>
+        </div>
+        <div id="form-error" class="error hidden"></div>
+      </div>
+
+      <!-- Kernels view -->
+      <div id="kernels" class="panel hidden">
+        <div class="panel-head">
+          <h2>Kernels</h2>
+          <button id="btn-kernels-close" class="btn ghost">Close</button>
+        </div>
+        <div class="card-title">Browser engines</div>
+        <div id="k-browsers" class="kernel-list"></div>
+        <div class="card-title" style="margin-top:20px">Proxy protocol kernels</div>
+        <div id="k-protocols" class="kernel-list"></div>
+        <pre id="k-log" class="mono json hidden"></pre>
+      </div>
+
+      <!-- Empty state -->
+      <div id="empty" class="panel empty">
+        <div class="empty-inner">
+          <div class="empty-logo">🦊</div>
+          <p>Select a profile, or create a new one.</p>
+          <button id="btn-new-2" class="btn primary">+ New profile</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="transport-web.js"></script>
+<script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "web", "runtimeExecutable": "node", "runtimeArgs": ["src/cli.js", "web", "--port", "4699"], "port": 4699 }
+  ]
+}

@@ -1,0 +1,11 @@
+node_modules/
+
+# Local runtime data — profiles, cookies, per-profile browser dirs, kernels
+.fingerprint-browser/
+.kitsune/
+
+# Personal design reference (contains sample personal URLs / cookie values)
+GUIsnapshot.md
+
+*.log
+.DS_Store
