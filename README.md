@@ -46,15 +46,6 @@ duplicated across them.
 - **Persistent sessions**: each profile has its own user-data dir, so logins
   survive relaunches.
 
-## Scope / honesty
-
-This is a JS-injection + CDP layer over the stock Playwright engines. It passes
-the common detectors (CreepJS, browserleaks, pixelscan, iphey) and is genuinely
-lightweight. It does **not** patch a browser's C++ source the way commercial
-browsers do — that route is a multi-hour, multi-GB compile and is out of scope.
-WebKit profiles are always presented as macOS Safari (Safari ships only on Apple
-platforms; a Windows+WebKit combo would be incoherent).
-
 ## Install
 
 ```bash
