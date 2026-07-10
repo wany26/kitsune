@@ -1,8 +1,9 @@
-// Shared renderer — runs identically under Electron (window.fpb from preload)
-// and in a browser (window.fpb from transport-web.js). No framework, plain DOM.
+// Shared renderer — runs identically under Electron (window.kitsune from preload)
+// and in a browser (window.kitsune from transport-web.js). No framework, plain DOM.
 
 const $ = (id) => document.getElementById(id);
-const api = window.fpb;
+const api = window.kitsune;
+const t = window.KitsuneI18n.t;
 
 let state = {
   profiles: [],
@@ -64,7 +65,7 @@ function renderList() {
       <div class="pi-main"><div class="pi-name"></div><div class="pi-meta"></div></div>`;
     li.querySelector(".pi-name").textContent = p.name;
     li.querySelector(".pi-meta").textContent =
-      `${p.engine || "chromium"} · ${p.presetId || "auto"} · ${p.proxy?.type && p.proxy.type !== "none" ? p.proxy.type : "direct"}`;
+      `${p.engine || "chromium"} · ${p.presetId || t("list.auto")} · ${p.proxy?.type && p.proxy.type !== "none" ? p.proxy.type : t("list.direct")}`;
     li.addEventListener("click", () => selectProfile(p.id));
     ul.appendChild(li);
   }
@@ -83,15 +84,15 @@ async function selectProfile(id) {
   $("d-url").dataset.id = id;
 
   kv($("d-identity"), {
-    Engine: `${fp.engine} (${fp.engineFamily})`,
-    OS: fp.os,
-    Preset: fp.presetId,
-    Platform: fp.platform,
-    "CPU / RAM": `${fp.hardwareConcurrency} cores${fp.deviceMemory ? " · " + fp.deviceMemory + " GB" : ""}`,
-    Screen: `${fp.screen.width}×${fp.screen.height} @${fp.screen.devicePixelRatio}x`,
-    Timezone: fp.timezone,
-    Languages: fp.languages.join(", "),
-    GPU: shorten(fp.webgl.unmaskedRenderer, 34),
+    [t("kv.engine")]: `${fp.engine} (${fp.engineFamily})`,
+    [t("kv.os")]: fp.os,
+    [t("kv.preset")]: fp.presetId,
+    [t("kv.platform")]: fp.platform,
+    [t("kv.cpuRam")]: `${fp.hardwareConcurrency} ${t("unit.cores")}${fp.deviceMemory ? " · " + fp.deviceMemory + " GB" : ""}`,
+    [t("kv.screen")]: `${fp.screen.width}×${fp.screen.height} @${fp.screen.devicePixelRatio}x`,
+    [t("kv.timezone")]: fp.timezone,
+    [t("kv.languages")]: fp.languages.join(", "),
+    [t("kv.gpu")]: shorten(fp.webgl.unmaskedRenderer, 34),
   });
   kv($("d-proxy"), proxySummary(p.proxy));
   $("d-fp").textContent = JSON.stringify(fp, null, 2);
@@ -99,20 +100,20 @@ async function selectProfile(id) {
 }
 
 function proxySummary(proxy) {
-  if (!proxy || proxy.type === "none") return { Type: "direct connection" };
-  const out = { Type: proxy.type };
-  if (proxy.server) out.Server = `${proxy.server}:${proxy.port ?? ""}`;
-  if (proxy.host) out.Host = `${proxy.host}:${proxy.port ?? ""}`;
-  if (proxy.user || proxy.username) out.User = proxy.user || proxy.username;
-  if (proxy.method) out.Method = proxy.method;
-  if (proxy.network) out.Transport = proxy.network + (proxy.tls ? " + TLS" : "");
-  if (proxy.password || proxy.id) out.Secret = "••••••••";
+  if (!proxy || proxy.type === "none") return { [t("kv.type")]: t("kv.directConnection") };
+  const out = { [t("kv.type")]: proxy.type };
+  if (proxy.server) out[t("kv.server")] = `${proxy.server}:${proxy.port ?? ""}`;
+  if (proxy.host) out[t("kv.host")] = `${proxy.host}:${proxy.port ?? ""}`;
+  if (proxy.user || proxy.username) out[t("kv.user")] = proxy.user || proxy.username;
+  if (proxy.method) out[t("kv.method")] = proxy.method;
+  if (proxy.network) out[t("kv.transport")] = proxy.network + (proxy.tls ? " + TLS" : "");
+  if (proxy.password || proxy.id) out[t("kv.secret")] = "••••••••";
   return out;
 }
 
 function setStatus(running) {
   const pill = $("d-status");
-  pill.textContent = running ? "running" : "stopped";
+  pill.textContent = running ? t("status.running") : t("status.stopped");
   pill.classList.toggle("running", running);
   $("btn-launch").classList.toggle("hidden", running);
   $("btn-stop").classList.toggle("hidden", !running);
@@ -202,7 +203,8 @@ function miniRow(container, fields, values = []) {
   container.appendChild(row);
 }
 const addTabRow = (url = "") => miniRow($("f-tabs"), ["https://…"], [url]);
-const addAccountRow = (platform = "", label = "") => miniRow($("f-accounts"), ["platform (e.g. apple)", "label / username"], [platform, label]);
+const addAccountRow = (platform = "", label = "") =>
+  miniRow($("f-accounts"), [t("form.accounts.platformPlaceholder"), t("form.accounts.labelPlaceholder")], [platform, label]);
 
 function updateCount(inputId, countId, max) {
   const el = $(inputId), c = $(countId);
@@ -216,7 +218,7 @@ function openForm(profile) {
   state.formSeed = null;
   const p = profile || {};
   const c = mergeCfg(p.config);
-  $("form-title").textContent = profile ? `Edit ${p.name}` : "New profile";
+  $("form-title").textContent = profile ? t("form.editProfile", { name: p.name }) : t("form.newProfile");
 
   $("f-name").value = p.name || "";
   $("f-name").disabled = !!profile;
@@ -228,7 +230,7 @@ function openForm(profile) {
   $("f-engine").value = p.engine || "chromium";
   fillSelect($("f-os"), ["Windows", "macOS", "Linux", "Android", "iOS"].map((o) => ({ v: o, t: o })));
   $("f-os").value = p.os || "macOS";
-  fillSelect($("f-preset"), [{ v: "", t: "auto (from OS)" }, ...state.presets.map((x) => ({ v: x.id, t: `${x.id} — ${x.os}` }))]);
+  fillSelect($("f-preset"), [{ v: "", t: t("form.basic.preset.auto") }, ...state.presets.map((x) => ({ v: x.id, t: `${x.id} — ${x.os}` }))]);
   $("f-preset").value = p.presetId || "";
 
   $("f-ua-mode").value = p.uaOverride ? "custom" : "auto";
@@ -268,7 +270,7 @@ function openForm(profile) {
   $("f-webgpu").value = c.webgpu;
   $("f-random").checked = !!c.randomize;
 
-  $("f-seed").value = p.seed || "(assigned on save)";
+  $("f-seed").value = p.seed || t("form.adv.seedUnset");
 
   $("form-error").classList.add("hidden");
   switchTab("basic");
@@ -280,7 +282,7 @@ function parseCookies() {
   const raw = $("f-cookies").value.trim();
   if (!raw) return [];
   const arr = JSON.parse(raw);
-  if (!Array.isArray(arr)) throw new Error("cookies must be a JSON array");
+  if (!Array.isArray(arr)) throw new Error(t("form.error.cookiesArray"));
   return arr;
 }
 
@@ -328,20 +330,28 @@ async function checkProxyUI() {
   const box = $("proxy-result");
   const btn = $("btn-check-proxy");
   box.className = "proxy-result";
-  box.textContent = "Checking… (launches a headless browser through the proxy)";
+  box.textContent = t("form.proxy.checking");
   btn.disabled = true;
   try {
     const r = await api.checkProxy(collectProxySpec(), $("f-ipquery").value);
     if (r.ok) {
       box.classList.add("ok");
-      box.innerHTML = `<b>OK</b> · ${r.ms} ms<br>IP ${r.ip} · ${r.city || ""} ${r.country || ""} (${r.countryCode || "?"})<br>tz ${r.timezone || "?"}${r.isp ? " · " + r.isp : ""}`;
+      box.innerHTML = t("form.proxy.resultOk", {
+        ms: r.ms,
+        ip: r.ip,
+        city: r.city || "",
+        country: r.country || "",
+        cc: r.countryCode || "?",
+        timezone: r.timezone || "?",
+        isp: r.isp ? " · " + r.isp : "",
+      });
     } else {
       box.classList.add("bad");
-      box.textContent = "Failed: " + (r.error || "unknown");
+      box.textContent = t("form.proxy.failed", { error: r.error || t("common.unknown") });
     }
   } catch (e) {
     box.classList.add("bad");
-    box.textContent = "Error: " + (e.message || e);
+    box.textContent = t("form.proxy.error", { error: e.message || e });
   } finally {
     btn.disabled = false;
   }
@@ -354,7 +364,7 @@ function renderProxyFields(type, values) {
     const label = document.createElement("label");
     label.className = "field" + (field.full ? " full" : "") + (field.type === "checkbox" ? " check" : "");
     const span = document.createElement("span");
-    span.textContent = field.name;
+    span.textContent = t("proxyField." + field.name);
 
     let input;
     if (field.type === "select") {
@@ -401,7 +411,7 @@ async function saveForm() {
       await refresh(state.editing.id);
     } else {
       const name = $("f-name").value.trim();
-      if (!name) throw new Error("name is required");
+      if (!name) throw new Error(t("form.error.nameRequired"));
       const created = await api.createProfile({ name, ...data });
       await refresh(created.id);
     }
@@ -418,6 +428,11 @@ async function openKernels() {
   await renderKernels();
 }
 
+function sourceLabel(src) {
+  const key = { playwright: "kernels.source.playwright", system: "kernels.source.system", managed: "kernels.source.managed", path: "kernels.source.path" }[src];
+  return key ? t(key) : src;
+}
+
 async function renderKernels() {
   const status = await api.kernels();
   const kb = $("k-browsers");
@@ -430,12 +445,12 @@ async function renderKernels() {
       name: id,
       meta: s.installed
         ? `${s.path}${s.version ? "  ·  " + s.version : ""}`
-        : s.kind === "channel" ? "system browser not found" : "not downloaded",
-      badge: s.installed ? ["ok", s.source] : ["no", s.kind === "channel" ? "not found" : "not installed"],
+        : s.kind === "channel" ? t("kernels.systemBrowserNotFound") : t("kernels.notDownloaded"),
+      badge: s.installed ? ["ok", sourceLabel(s.source)] : ["no", s.kind === "channel" ? t("kernels.notFound") : t("kernels.notInstalled")],
       // Only Playwright-managed engines can be downloaded; a channel browser
       // must be installed by the user.
       canInstall: s.kind === "managed" && !s.installed,
-      installLabel: "Download",
+      installLabel: t("kernels.download"),
       onInstall: (log) => api.installBrowser(id).then(log),
     }));
   }
@@ -444,15 +459,16 @@ async function renderKernels() {
     kp.appendChild(kernelRow({
       name,
       meta: s.installed ? `${s.path}${s.version ? "  ·  " + s.version : ""}${alt}` : "",
-      badge: s.installed ? [s.source === "managed" ? "ok" : "sys", s.source] : ["no", s.installable ? "not installed" : "not found"],
+      badge: s.installed ? [s.source === "managed" ? "ok" : "sys", sourceLabel(s.source)] : ["no", s.installable ? t("kernels.notInstalled") : t("kernels.notFound")],
       canInstall: s.installable && (!s.installed || s.source === "path"),
-      installLabel: s.installed ? "Install managed copy" : "Install",
+      installLabel: s.installed ? t("kernels.installManagedCopy") : t("kernels.install"),
       onInstall: (log) => api.installProtocol(name).then(log),
     }));
   }
 }
 
-function kernelRow({ name, meta, badge, canInstall, installLabel = "Install", onInstall }) {
+function kernelRow({ name, meta, badge, canInstall, installLabel, onInstall }) {
+  installLabel = installLabel ?? t("kernels.install");
   const row = document.createElement("div");
   row.className = "kernel-row";
   row.innerHTML = `<div><div class="k-name"></div><div class="k-meta mono"></div></div>
@@ -466,16 +482,16 @@ function kernelRow({ name, meta, badge, canInstall, installLabel = "Install", on
     btn.textContent = installLabel;
     btn.addEventListener("click", async () => {
       btn.disabled = true;
-      btn.textContent = "Installing…";
+      btn.textContent = t("kernels.installing");
       const logEl = $("k-log");
       logEl.classList.remove("hidden");
-      logEl.textContent = `installing ${name}…\n`;
+      logEl.textContent = t("kernels.installingLog", { name });
       try {
         await onInstall(() => {});
-        logEl.textContent += "done.\n";
+        logEl.textContent += t("kernels.done");
         await renderKernels();
       } catch (err) {
-        logEl.textContent += "ERROR: " + (err.message || err) + "\n";
+        logEl.textContent += t("kernels.errorLog", { error: err.message || err });
         btn.disabled = false;
         btn.textContent = installLabel;
       }
@@ -491,15 +507,15 @@ async function launch() {
   const url = $("d-url").value.trim() || undefined;
   const btn = $("btn-launch");
   btn.disabled = true;
-  btn.textContent = "Launching…";
+  btn.textContent = t("js.launching");
   try {
     await api.launch(id, url);
     markRunning(id, true);
   } catch (err) {
-    alert("Launch failed:\n" + (err.message || err));
+    alert(t("js.launchFailed", { error: err.message || err }));
   } finally {
     btn.disabled = false;
-    btn.textContent = "Launch";
+    btn.textContent = t("detail.launch");
   }
 }
 async function stop() {
@@ -569,11 +585,45 @@ async function init() {
   $("btn-kernels-close").addEventListener("click", () => (state.selectedId ? selectProfile(state.selectedId) : show("empty")));
   $("btn-delete").addEventListener("click", async () => {
     const p = state.profiles.find((x) => x.id === state.selectedId);
-    if (p && confirm(`Delete "${p.name}" and all its browser data?`)) {
+    if (p && confirm(t("js.deleteConfirm", { name: p.name }))) {
       await api.deleteProfile(p.id);
       state.selectedId = null;
       await refresh();
       if (!state.profiles.length) show("empty");
+    }
+  });
+
+  // Language toggle: button always shows the language you'd switch *to*.
+  const updateLangBtn = () => ($("btn-lang").textContent = KitsuneI18n.getLang() === "zh" ? "EN" : "中文");
+  updateLangBtn();
+  $("btn-lang").addEventListener("click", () => {
+    KitsuneI18n.setLang(KitsuneI18n.getLang() === "zh" ? "en" : "zh");
+  });
+  KitsuneI18n.onChange(async () => {
+    updateLangBtn();
+    renderList();
+    if (!$("form").classList.contains("hidden")) {
+      // Form is mid-edit: applyStaticI18n() already relabeled everything with
+      // data-i18n; don't rebuild the form itself or it would discard unsaved
+      // input/selections. Just patch the couple of JS-only dynamic bits.
+      $("form-title").textContent = state.editing ? t("form.editProfile", { name: state.editing.name }) : t("form.newProfile");
+      const autoOpt = $("f-preset").querySelector('option[value=""]');
+      if (autoOpt) autoOpt.textContent = t("form.basic.preset.auto");
+      // The seed field's placeholder text is a JS-set .value, not covered by
+      // data-i18n — only re-translate it if it's still showing that placeholder
+      // (i.e. no real seed has been assigned yet for this new profile).
+      if (!state.formSeed && !(state.editing && state.editing.seed)) $("f-seed").value = t("form.adv.seedUnset");
+      // Proxy field labels (server/port/password/…) are built dynamically by
+      // renderProxyFields() with no data-i18n hook; re-label in place using the
+      // field name already stashed on each input, without touching its value.
+      $("f-proxy-fields").querySelectorAll("[data-name]").forEach((input) => {
+        const span = input.closest(".field").querySelector("span");
+        if (span) span.textContent = t("proxyField." + input.dataset.name);
+      });
+    } else if (!$("detail").classList.contains("hidden") && state.selectedId) {
+      await selectProfile(state.selectedId);
+    } else if (!$("kernels").classList.contains("hidden")) {
+      await renderKernels();
     }
   });
 

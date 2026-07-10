@@ -7,5 +7,9 @@ node_modules/
 # Personal design reference (contains sample personal URLs / cookie values)
 GUIsnapshot.md
 
+# Packaged apps + generated icons (regenerate with `npm run icon`)
+dist/
+build/
+
 *.log
 .DS_Store

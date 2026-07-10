@@ -1,0 +1,86 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b2436"/>
+      <stop offset="1" stop-color="#0c0f15"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.34" r="0.62">
+      <stop offset="0" stop-color="#4f8cff" stop-opacity="0.32"/>
+      <stop offset="0.6" stop-color="#4f8cff" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#4f8cff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="fur" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#ffab52"/>
+      <stop offset="0.45" stop-color="#ff8a34"/>
+      <stop offset="1" stop-color="#e2551c"/>
+    </linearGradient>
+    <linearGradient id="ear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6ee"/>
+      <stop offset="1" stop-color="#ffe2c4"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1024" height="1024" rx="232" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1024" height="1024" rx="232" fill="url(#glow)"/>
+  <rect x="6" y="6" width="1012" height="1012" rx="226" fill="none" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3"/>
+
+  <!-- curled fox mark -->
+  <g stroke="#5c1f14" stroke-width="16" stroke-linejoin="round" stroke-linecap="round">
+
+    <!-- main silhouette: head + back + tail, one continuous curl -->
+    <path d="M 230 260
+             C 218 216 224 178 252 152
+             C 300 190 336 224 356 258
+             C 392 232 434 218 476 222
+             C 500 184 534 154 574 150
+             C 592 196 596 236 584 270
+             C 640 296 682 340 706 396
+             C 762 404 812 436 846 486
+             C 884 544 892 610 866 668
+             C 838 730 782 764 716 764
+             C 668 764 626 742 600 706
+             C 616 668 646 642 690 634
+             C 720 628 742 606 748 576
+             C 754 542 738 512 706 496
+             C 672 480 638 494 618 526
+             C 600 556 566 606 508 632
+             C 452 656 396 654 350 626
+             C 396 600 424 566 428 526
+             C 430 496 414 468 384 452
+             C 340 428 296 436 264 468
+             C 236 496 226 534 236 572
+             C 214 546 200 512 198 476
+             C 194 420 210 366 244 322
+             C 232 306 224 284 230 260 Z"
+          fill="url(#fur)"/>
+
+    <!-- inner ears -->
+    <path d="M 268 208 C 292 226 312 250 322 276 C 296 280 270 270 254 250 C 246 236 252 220 268 208 Z" fill="url(#ear)"/>
+    <path d="M 502 190 C 514 216 518 244 512 270 C 488 262 470 244 462 220 C 466 204 482 192 502 190 Z" fill="url(#ear)"/>
+
+    <!-- tail tip: layered white fur, tucked near the chest -->
+    <path d="M 350 626
+             C 330 600 322 566 332 532
+             C 344 544 354 566 356 588
+             C 368 566 372 542 366 518
+             C 382 528 394 550 396 574
+             C 410 554 414 530 406 506
+             C 424 516 436 538 438 562
+             C 448 536 448 508 436 484
+             C 428 522 412 552 384 574
+             C 400 578 416 588 428 526
+             C 424 566 396 600 350 626 Z"
+          fill="#fff6ee" stroke-width="10"/>
+
+    <!-- muzzle / chest patch -->
+    <path d="M 356 258 C 392 300 406 344 396 388 C 386 424 360 452 326 468
+             C 300 436 292 396 302 358 C 312 320 330 288 356 258 Z"
+          fill="#fff6ee" stroke-width="10"/>
+
+    <!-- closed eye -->
+    <path d="M 460 296 C 484 282 512 282 532 300 C 510 316 482 314 460 296 Z" fill="#3a1710" stroke-width="6"/>
+
+    <!-- nose -->
+    <path d="M 700 400 C 716 400 726 408 726 418 C 726 430 714 440 700 442 C 686 440 676 430 676 418 C 676 408 686 400 700 400 Z" fill="#3a1710" stroke-width="4"/>
+  </g>
+</svg>

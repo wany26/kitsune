@@ -153,7 +153,7 @@ program
   .description("List profiles")
   .action(() => {
     const profiles = listProfiles();
-    if (!profiles.length) return console.log("(no profiles yet — try `fpb create`)");
+    if (!profiles.length) return console.log("(no profiles yet — try `kitsune create`)");
     for (const p of profiles) {
       const proxy = p.proxy?.type && p.proxy.type !== "none" ? p.proxy.type : "direct";
       console.log(`${p.id}  ${p.name.padEnd(20)} ${(p.engine || "chromium").padEnd(9)} preset=${p.presetId || "auto"}  proxy=${proxy}`);
@@ -164,9 +164,9 @@ program
   .command("create")
   .description("Create a profile")
   .option("-n, --name <name>", "human-readable name")
-  .option("-e, --engine <id>", "browser kernel (see `fpb engines`)", "chromium")
+  .option("-e, --engine <id>", "browser kernel (see `kitsune engines`)", "chromium")
   .option("-o, --os <os>", "operating system (Windows|macOS|Linux|Android|iOS)")
-  .option("-p, --preset <id>", "device preset (see `fpb presets`)")
+  .option("-p, --preset <id>", "device preset (see `kitsune presets`)")
   .option("--seed <seed>", "explicit seed (else random, kept stable forever)")
   .option("--proxy <url>", "proxy url, e.g. socks5://host:1080 or ssh://user@host:22")
   .option("--proxy-json <json>", "full proxy spec as JSON (for vmess/vless/trojan)")

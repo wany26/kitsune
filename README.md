@@ -1,5 +1,7 @@
 # 🦊 Kitsune 狐
 
+English | [简体中文](README.zh-CN.md)
+
 > *The many-faced fox* — one core, endless coherent identities.
 
 A lightweight, scriptable **fingerprint browser**: manage many browser profiles,
@@ -62,6 +64,30 @@ npm install          # also downloads the Chromium kernel via playwright
 Other browser kernels and protocol binaries are pulled on demand (see
 **Kernel manager** below) — nothing else needs to be on your PATH up front.
 
+## Build a desktop app (.app / .dmg)
+
+The logo (`logo.png` — the fox mark, project root) is the single source for every
+icon; the Electron GUI is packaged with [electron-builder](https://www.electron.build/).
+
+```bash
+npm run icon    # logo.png -> build/icon.icns + build/icon.png (app icon, composited
+                # onto the navy brand backdrop) + ui/logo.png + ui/icon.png (transparent,
+                # used in-app for the header mark / empty state / favicon)
+npm run pack    # unpacked app  -> dist/mac-arm64/Kitsune.app
+npm run dist    # installer      -> dist/Kitsune-<ver>-<arch>.dmg   (mac; nsis/AppImage on win/linux)
+```
+
+Build config lives in `electron-builder.json`; the Electron entry point is
+`package.json` → `"main": "electron/main.js"` (the library API is still importable
+via the `exports` map). If the `npm run` scripts are missing, build directly:
+`node scripts/make-icon.mjs && npx electron-builder`.
+
+Playwright is unpacked from the asar so the bundled app can drive its engines.
+One caveat: the packaged app reuses Playwright's **global browser cache**
+(`~/Library/Caches/ms-playwright`), so on a brand-new machine run
+`npx playwright install chromium` once (or use the in-app Kernels tab) before
+launching a profile. Builds are unsigned — on first open, right-click → Open.
+
 ## Kernel manager (detect + auto-pull)
 
 ```bash
@@ -90,7 +116,7 @@ Protocol kernels:
   the OS's known install locations. Only managed engines can be auto-downloaded
   (through Playwright's verified installer); a channel browser must be installed
   by you.
-- **Protocol kernels** — detected from `~/.fingerprint-browser/bin` first, then
+- **Protocol kernels** — detected from `~/.kitsune/bin` first, then
   from any known binary name on PATH (`xray` **or** `v2ray`; `sslocal` **or**
   libev's `ss-local`; system `ssh`). `xray`/`shadowsocks` can be auto-pulled
   from their official GitHub releases, matched to your OS+CPU; the proxy bridges
@@ -123,7 +149,8 @@ node src/cli.js launch work1 --url https://browserleaks.com/canvas
 node src/cli.js delete work1
 ```
 
-Profiles live in `~/.fingerprint-browser` (override with `FPB_HOME`).
+Profiles live in `~/.kitsune` (override with `KITSUNE_HOME`). An older
+`~/.fingerprint-browser` directory is migrated here automatically on first run.
 
 ## Desktop GUI (Electron)
 
@@ -142,9 +169,20 @@ npm run gui
   shows only the fields that protocol needs (SS method, VMess UUID/transport/TLS,
   SSH key, etc.).
 
-The GUI reads/writes the same `~/.fingerprint-browser` store as the CLI, so you
+The GUI reads/writes the same `~/.kitsune` store as the CLI, so you
 can mix the two. It talks to the core only through a context-isolated preload
-bridge (`window.fpb`) — no Node access leaks into page context.
+bridge (`window.kitsune`) — no Node access leaks into page context.
+
+## Interface language (English / 中文)
+
+The GUI (Electron and web, same frontend) is fully bilingual. It auto-detects
+from the OS/browser locale on first run (`zh-*` → 中文, else English), persists
+your choice, and switches instantly via the toggle button in the top-right
+corner — no reload needed, and in-progress form input is preserved across a
+switch. Implemented in `ui/i18n.js` (a flat `{ en: {...}, zh: {...} }` dictionary
++ a `t(key, vars)` helper); static markup picks up translations via
+`data-i18n`/`data-i18n-placeholder`/`data-i18n-title` attributes in `ui/index.html`,
+and `ui/renderer.js` calls `t()` directly for anything generated at runtime.
 
 ## Web UI
 
@@ -155,10 +193,10 @@ npm run web            # -> http://127.0.0.1:4600   (node src/cli.js web --port 
 ```
 
 The Electron app and the web UI share **one** frontend (`ui/`). The only
-difference is the transport: under Electron `window.fpb` comes from the preload;
+difference is the transport: under Electron `window.kitsune` comes from the preload;
 in the browser it comes from `ui/transport-web.js`, which talks to the REST API
 in `src/web/server.js`. Launched browsers open on the machine running the server
-(set `FPB_HEADLESS=1` for a headless host).
+(set `KITSUNE_HEADLESS=1` for a headless host).
 
 ## Profile editor
 
@@ -230,10 +268,11 @@ src/
         └── launcher.js          persistent context + CDP + injection
 ui/                              shared frontend (Electron + web)
 ├── index.html · styles.css · renderer.js
-└── transport-web.js             window.fpb over REST when not under Electron
+├── i18n.js                     English/中文 dictionary + t() + language toggle
+└── transport-web.js             window.kitsune over REST when not under Electron
 electron/
 ├── main.js                      IPC handlers -> core library; session tracking
-└── preload.cjs                  context-isolated window.fpb bridge (-> ui/)
+└── preload.cjs                  context-isolated window.kitsune bridge (-> ui/)
 ```
 
 ## Responsible use

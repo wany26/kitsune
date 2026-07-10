@@ -41,8 +41,7 @@ body {
 }
 .topbar button { -webkit-app-region: no-drag; }
 .brand { display: flex; align-items: center; gap: 8px; font-weight: 600; }
-.logo { font-size: 17px; }
-.brand-cjk { font-style: normal; color: var(--muted); font-weight: 500; margin-left: 1px; }
+.logo { height: 30px; width: auto; display: block; }
 .topbar-actions { display: flex; gap: 8px; }
 
 /* ---- layout ---- */
@@ -192,7 +191,7 @@ textarea.input { resize: vertical; line-height: 1.5; }
 /* ---- empty & error ---- */
 .empty { display: flex; align-items: center; justify-content: center; height: 80%; max-width: none; }
 .empty-inner { text-align: center; color: var(--muted); }
-.empty-logo { font-size: 48px; color: var(--border); margin-bottom: 12px; }
+.empty-logo { height: 136px; width: auto; margin: 0 auto 18px; display: block; opacity: 0.92; }
 .empty-inner p { margin-bottom: 16px; }
 
 .error {

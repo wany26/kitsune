@@ -5,26 +5,28 @@
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
   <title>Kitsune</title>
+  <link rel="icon" href="icon.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <div id="app">
   <header class="topbar">
     <div class="brand">
-      <span class="logo">🦊</span>
-      <span>Kitsune <em class="brand-cjk">狐</em></span>
+      <img class="logo" src="logo.png" alt="Kitsune" />
+      <span>Kitsune</span>
     </div>
     <div class="topbar-actions">
-      <button id="btn-kernels" class="btn ghost" title="Manage browser & protocol kernels">Kernels</button>
-      <button id="btn-open-data" class="btn ghost" title="Open profiles data directory">Data dir</button>
-      <button id="btn-new" class="btn primary">+ New profile</button>
+      <button id="btn-lang" class="btn ghost" data-i18n-title="topbar.langToggle.title">中文</button>
+      <button id="btn-kernels" class="btn ghost" data-i18n="topbar.kernels" data-i18n-title="topbar.kernels.title"></button>
+      <button id="btn-open-data" class="btn ghost" data-i18n="topbar.dataDir" data-i18n-title="topbar.dataDir.title"></button>
+      <button id="btn-new" class="btn primary" data-i18n="topbar.newProfile"></button>
     </div>
   </header>
 
   <main class="layout">
     <aside class="sidebar">
       <div class="sidebar-head">
-        <span>Profiles</span>
+        <span data-i18n="sidebar.profiles"></span>
         <span id="profile-count" class="count">0</span>
       </div>
       <ul id="profile-list" class="profile-list"></ul>
@@ -38,165 +40,202 @@
             <h2 id="d-name">—</h2>
             <div id="d-sub" class="muted mono"></div>
           </div>
-          <span id="d-status" class="status-pill">stopped</span>
+          <span id="d-status" class="status-pill" data-i18n="status.stopped"></span>
         </div>
 
         <div class="launch-row">
           <input id="d-url" class="input grow" type="text" value="https://abrahamjuliot.github.io/creepjs/" />
-          <button id="btn-launch" class="btn primary">Launch</button>
-          <button id="btn-stop" class="btn danger hidden">Stop</button>
+          <button id="btn-launch" class="btn primary" data-i18n="detail.launch"></button>
+          <button id="btn-stop" class="btn danger hidden" data-i18n="detail.stop"></button>
         </div>
 
         <div class="cards">
           <div class="card">
-            <div class="card-title">Identity</div>
+            <div class="card-title" data-i18n="detail.identity"></div>
             <dl id="d-identity" class="kv"></dl>
           </div>
           <div class="card">
-            <div class="card-title">Proxy</div>
+            <div class="card-title" data-i18n="detail.proxy"></div>
             <dl id="d-proxy" class="kv"></dl>
           </div>
         </div>
 
         <details class="fp-details">
-          <summary>Full fingerprint (JSON)</summary>
+          <summary data-i18n="detail.fullFingerprint"></summary>
           <pre id="d-fp" class="mono json"></pre>
         </details>
 
         <div class="detail-actions">
-          <button id="btn-edit" class="btn ghost">Edit</button>
-          <button id="btn-delete" class="btn danger-ghost">Delete profile</button>
+          <button id="btn-edit" class="btn ghost" data-i18n="detail.edit"></button>
+          <button id="btn-delete" class="btn danger-ghost" data-i18n="detail.deleteProfile"></button>
         </div>
       </div>
 
       <!-- Create / edit form (tabbed) -->
       <div id="form" class="panel form-panel hidden">
-        <div class="panel-head"><h2 id="form-title">New profile</h2></div>
+        <div class="panel-head"><h2 id="form-title" data-i18n="form.newProfile"></h2></div>
 
         <nav class="tabs">
-          <button class="tab active" data-tab="basic">Basic</button>
-          <button class="tab" data-tab="proxy">Proxy</button>
-          <button class="tab" data-tab="accounts">Accounts</button>
-          <button class="tab" data-tab="fp">Fingerprint</button>
-          <button class="tab" data-tab="adv">Advanced</button>
+          <button class="tab active" data-tab="basic" data-i18n="form.tab.basic"></button>
+          <button class="tab" data-tab="proxy" data-i18n="form.tab.proxy"></button>
+          <button class="tab" data-tab="accounts" data-i18n="form.tab.accounts"></button>
+          <button class="tab" data-tab="fp" data-i18n="form.tab.fp"></button>
+          <button class="tab" data-tab="adv" data-i18n="form.tab.adv"></button>
         </nav>
 
         <!-- Basic -->
         <section class="tab-body" data-tab="basic">
-          <label class="field"><span>Name <em id="f-name-count" class="muted"></em></span>
-            <input id="f-name" class="input" type="text" maxlength="100" placeholder="e.g. us-account-1" /></label>
+          <label class="field"><span data-i18n="form.basic.name"></span> <em id="f-name-count" class="muted"></em>
+            <input id="f-name" class="input" type="text" maxlength="100" data-i18n-placeholder="form.basic.name.placeholder" /></label>
           <div class="field-row">
-            <label class="field"><span>Browser kernel</span><select id="f-engine" class="input"></select></label>
-            <label class="field"><span>Operating system</span><select id="f-os" class="input"></select></label>
+            <label class="field"><span data-i18n="form.basic.engine"></span><select id="f-engine" class="input"></select></label>
+            <label class="field"><span data-i18n="form.basic.os"></span><select id="f-os" class="input"></select></label>
           </div>
-          <label class="field"><span>Device preset</span><select id="f-preset" class="input"></select></label>
-          <label class="field"><span>User-Agent</span>
-            <select id="f-ua-mode" class="input mode"><option value="auto">Auto (from kernel + OS)</option><option value="custom">Custom</option></select>
+          <label class="field"><span data-i18n="form.basic.preset"></span><select id="f-preset" class="input"></select></label>
+          <label class="field"><span data-i18n="form.basic.ua"></span>
+            <select id="f-ua-mode" class="input mode">
+              <option value="auto" data-i18n="form.basic.ua.auto"></option>
+              <option value="custom" data-i18n="form.basic.ua.custom"></option>
+            </select>
             <textarea id="f-ua" class="input mono" rows="2" data-when="custom" placeholder="Mozilla/5.0 …"></textarea></label>
-          <label class="field"><span>Cookies (JSON array)</span>
+          <label class="field"><span data-i18n="form.basic.cookies"></span>
             <textarea id="f-cookies" class="input mono" rows="4" placeholder='[{"name":"SID","value":"…","domain":".google.com","path":"/"}]'></textarea></label>
-          <label class="field"><span>Note <em id="f-note-count" class="muted"></em></span>
+          <label class="field"><span data-i18n="form.basic.note"></span> <em id="f-note-count" class="muted"></em>
             <textarea id="f-note" class="input" rows="2" maxlength="20000"></textarea></label>
         </section>
 
         <!-- Proxy -->
         <section class="tab-body hidden" data-tab="proxy">
-          <label class="field"><span>Proxy protocol</span><select id="f-proxy-type" class="input"></select></label>
+          <label class="field"><span data-i18n="form.proxy.protocol"></span><select id="f-proxy-type" class="input"></select></label>
           <div id="f-proxy-fields" class="proxy-fields"></div>
           <div class="field-row">
-            <label class="field"><span>IP query channel</span>
+            <label class="field"><span data-i18n="form.proxy.ipQuery"></span>
               <select id="f-ipquery" class="input"><option value="ip-api">IP-API</option><option value="ipwhois">ipwho.is</option></select></label>
-            <div class="field"><span>&nbsp;</span><button id="btn-check-proxy" class="btn">Check proxy</button></div>
+            <div class="field"><span>&nbsp;</span><button id="btn-check-proxy" class="btn" data-i18n="form.proxy.check"></button></div>
           </div>
           <div id="proxy-result" class="proxy-result hidden"></div>
         </section>
 
         <!-- Accounts -->
         <section class="tab-body hidden" data-tab="accounts">
-          <div class="card-title">Startup tabs (opened on launch)</div>
+          <div class="card-title" data-i18n="form.accounts.startupTabs"></div>
           <div id="f-tabs" class="mini-list"></div>
-          <button id="btn-add-tab" class="btn sm">+ Add tab URL</button>
-          <div class="card-title" style="margin-top:18px">Accounts</div>
+          <button id="btn-add-tab" class="btn sm" data-i18n="form.accounts.addTab"></button>
+          <div class="card-title" style="margin-top:18px" data-i18n="form.accounts.accounts"></div>
           <div id="f-accounts" class="mini-list"></div>
-          <button id="btn-add-account" class="btn sm">+ Add account</button>
+          <button id="btn-add-account" class="btn sm" data-i18n="form.accounts.addAccount"></button>
         </section>
 
         <!-- Fingerprint -->
         <section class="tab-body hidden" data-tab="fp">
-          <label class="field"><span>WebRTC</span>
+          <label class="field"><span data-i18n="form.fp.webrtc"></span>
             <select id="f-webrtc" class="input">
-              <option value="forward">Forward</option><option value="replace">Replace</option>
-              <option value="real">Real</option><option value="disable">Disable</option><option value="proxy">Proxy UDP</option>
+              <option value="forward" data-i18n="form.fp.webrtc.forward"></option>
+              <option value="replace" data-i18n="form.fp.webrtc.replace"></option>
+              <option value="real" data-i18n="form.fp.webrtc.real"></option>
+              <option value="disable" data-i18n="form.fp.webrtc.disable"></option>
+              <option value="proxy" data-i18n="form.fp.webrtc.proxy"></option>
             </select></label>
 
           <div class="field-row">
-            <label class="field"><span>Timezone</span>
-              <select id="f-tz-mode" class="input mode"><option value="ip">Based on IP</option><option value="real">Real</option><option value="custom">Custom</option></select>
+            <label class="field"><span data-i18n="form.fp.timezone"></span>
+              <select id="f-tz-mode" class="input mode">
+                <option value="ip" data-i18n="form.fp.mode.ip"></option>
+                <option value="real" data-i18n="form.fp.mode.real"></option>
+                <option value="custom" data-i18n="form.fp.mode.custom"></option>
+              </select>
               <input id="f-tz" class="input" data-when="custom" placeholder="America/New_York" /></label>
-            <label class="field"><span>Language</span>
-              <select id="f-lang-mode" class="input mode"><option value="ip">Based on IP</option><option value="custom">Custom</option></select>
+            <label class="field"><span data-i18n="form.fp.language"></span>
+              <select id="f-lang-mode" class="input mode">
+                <option value="ip" data-i18n="form.fp.mode.ip"></option>
+                <option value="custom" data-i18n="form.fp.mode.custom"></option>
+              </select>
               <input id="f-lang" class="input" data-when="custom" placeholder="en-US,en" /></label>
           </div>
 
           <div class="field-row">
-            <label class="field"><span>UI language</span>
-              <select id="f-uilang-mode" class="input mode"><option value="language">Based on language</option><option value="real">Real</option><option value="custom">Custom</option></select>
+            <label class="field"><span data-i18n="form.fp.uiLanguage"></span>
+              <select id="f-uilang-mode" class="input mode">
+                <option value="language" data-i18n="form.fp.uilang.language"></option>
+                <option value="real" data-i18n="form.fp.mode.real"></option>
+                <option value="custom" data-i18n="form.fp.mode.custom"></option>
+              </select>
               <input id="f-uilang" class="input" data-when="custom" placeholder="en-US" /></label>
-            <label class="field"><span>Geolocation</span>
-              <select id="f-geo-mode" class="input mode"><option value="ip">Based on IP</option><option value="custom">Custom</option><option value="block">Block</option></select>
-              <select id="f-geo-perm" class="input"><option value="ask">Ask each time</option><option value="allow">Always allow</option></select></label>
+            <label class="field"><span data-i18n="form.fp.geolocation"></span>
+              <select id="f-geo-mode" class="input mode">
+                <option value="ip" data-i18n="form.fp.mode.ip"></option>
+                <option value="custom" data-i18n="form.fp.mode.custom"></option>
+                <option value="block" data-i18n="form.fp.geo.block"></option>
+              </select>
+              <select id="f-geo-perm" class="input">
+                <option value="ask" data-i18n="form.fp.geoPerm.ask"></option>
+                <option value="allow" data-i18n="form.fp.geoPerm.allow"></option>
+              </select></label>
           </div>
           <div class="field-row" data-geo-custom>
-            <label class="field"><span>Latitude</span><input id="f-geo-lat" class="input" type="number" step="any" /></label>
-            <label class="field"><span>Longitude</span><input id="f-geo-lon" class="input" type="number" step="any" /></label>
+            <label class="field"><span data-i18n="form.fp.latitude"></span><input id="f-geo-lat" class="input" type="number" step="any" /></label>
+            <label class="field"><span data-i18n="form.fp.longitude"></span><input id="f-geo-lon" class="input" type="number" step="any" /></label>
           </div>
 
           <div class="field-row">
-            <label class="field"><span>Resolution</span>
-              <select id="f-res-mode" class="input mode"><option value="ua">Predefined (from UA)</option><option value="custom">Custom</option></select></label>
-            <div class="field" data-when-res="custom"><span>W × H</span>
+            <label class="field"><span data-i18n="form.fp.resolution"></span>
+              <select id="f-res-mode" class="input mode">
+                <option value="ua" data-i18n="form.fp.res.ua"></option>
+                <option value="custom" data-i18n="form.fp.res.custom"></option>
+              </select></label>
+            <div class="field" data-when-res="custom"><span data-i18n="form.fp.wh"></span>
               <div class="wh"><input id="f-res-w" class="input" type="number" placeholder="1920" /><span>×</span><input id="f-res-h" class="input" type="number" placeholder="1080" /></div></div>
           </div>
 
-          <label class="field"><span>Fonts</span>
-            <select id="f-fonts-mode" class="input mode"><option value="default">Default (OS set)</option><option value="custom">Custom</option></select>
+          <label class="field"><span data-i18n="form.fp.fonts"></span>
+            <select id="f-fonts-mode" class="input mode">
+              <option value="default" data-i18n="form.fp.fonts.default"></option>
+              <option value="custom" data-i18n="form.fp.res.custom"></option>
+            </select>
             <textarea id="f-fonts" class="input mono" rows="2" data-when="custom" placeholder="Arial, Verdana, …"></textarea></label>
 
-          <div class="card-title" style="margin-top:8px">Hardware noise</div>
+          <div class="card-title" style="margin-top:8px" data-i18n="form.fp.hardwareNoise"></div>
           <div class="noise-grid">
-            <label class="chk"><input type="checkbox" id="n-canvas" checked /> Canvas</label>
-            <label class="chk"><input type="checkbox" id="n-webglImage" checked /> WebGL image</label>
-            <label class="chk"><input type="checkbox" id="n-audio" checked /> AudioContext</label>
-            <label class="chk"><input type="checkbox" id="n-mediaDevices" checked /> Media devices</label>
-            <label class="chk"><input type="checkbox" id="n-clientRects" checked /> ClientRects</label>
-            <label class="chk"><input type="checkbox" id="n-speechVoices" checked /> SpeechVoices</label>
+            <label class="chk"><input type="checkbox" id="n-canvas" checked /> <span data-i18n="form.fp.noise.canvas"></span></label>
+            <label class="chk"><input type="checkbox" id="n-webglImage" checked /> <span data-i18n="form.fp.noise.webglImage"></span></label>
+            <label class="chk"><input type="checkbox" id="n-audio" checked /> <span data-i18n="form.fp.noise.audio"></span></label>
+            <label class="chk"><input type="checkbox" id="n-mediaDevices" checked /> <span data-i18n="form.fp.noise.mediaDevices"></span></label>
+            <label class="chk"><input type="checkbox" id="n-clientRects" checked /> <span data-i18n="form.fp.noise.clientRects"></span></label>
+            <label class="chk"><input type="checkbox" id="n-speechVoices" checked /> <span data-i18n="form.fp.noise.speechVoices"></span></label>
           </div>
 
-          <label class="field" style="margin-top:14px"><span>WebGL metadata</span>
-            <select id="f-webgl-mode" class="input mode"><option value="custom">Custom</option><option value="real">Real</option></select></label>
+          <label class="field" style="margin-top:14px"><span data-i18n="form.fp.webglMeta"></span>
+            <select id="f-webgl-mode" class="input mode">
+              <option value="custom" data-i18n="form.fp.webglMeta.custom"></option>
+              <option value="real" data-i18n="form.fp.webglMeta.real"></option>
+            </select></label>
           <div class="field-row" data-when-webgl="custom">
-            <label class="field"><span>Vendor</span><select id="f-webgl-vendor" class="input"></select></label>
-            <label class="field"><span>Renderer</span><select id="f-webgl-renderer" class="input"></select></label>
+            <label class="field"><span data-i18n="form.fp.vendor"></span><select id="f-webgl-vendor" class="input"></select></label>
+            <label class="field"><span data-i18n="form.fp.renderer"></span><select id="f-webgl-renderer" class="input"></select></label>
           </div>
 
           <div class="field-row">
-            <label class="field"><span>WebGPU</span>
-              <select id="f-webgpu" class="input"><option value="webgl">Based on WebGL</option><option value="real">Real</option><option value="disable">Disable</option></select></label>
-            <label class="field chk-field"><span>Random fingerprint</span>
-              <label class="chk"><input type="checkbox" id="f-random" /> New random fingerprint each launch</label></label>
+            <label class="field"><span data-i18n="form.fp.webgpu"></span>
+              <select id="f-webgpu" class="input">
+                <option value="webgl" data-i18n="form.fp.webgpu.webgl"></option>
+                <option value="real" data-i18n="form.fp.webgpu.real"></option>
+                <option value="disable" data-i18n="form.fp.webgpu.disable"></option>
+              </select></label>
+            <label class="field chk-field"><span data-i18n="form.fp.randomFingerprint"></span>
+              <label class="chk"><input type="checkbox" id="f-random" /> <span data-i18n="form.fp.randomFingerprint.label"></span></label></label>
           </div>
         </section>
 
         <!-- Advanced -->
         <section class="tab-body hidden" data-tab="adv">
-          <label class="field"><span>Seed (determines the fingerprint)</span>
-            <div class="wh"><input id="f-seed" class="input mono" readonly /><button id="btn-reseed" class="btn sm">Regenerate</button></div></label>
-          <p class="muted" style="font-size:12px">The seed is fixed per profile so the fingerprint stays identical across relaunches. Regenerate to roll a brand-new (but still stable) identity.</p>
+          <label class="field"><span data-i18n="form.adv.seed"></span>
+            <div class="wh"><input id="f-seed" class="input mono" readonly /><button id="btn-reseed" class="btn sm" data-i18n="form.adv.regenerate"></button></div></label>
+          <p class="muted" style="font-size:12px" data-i18n="form.adv.seedHelp"></p>
         </section>
 
         <div class="form-actions">
-          <button id="btn-save" class="btn primary">Save</button>
-          <button id="btn-cancel" class="btn ghost">Cancel</button>
+          <button id="btn-save" class="btn primary" data-i18n="form.save"></button>
+          <button id="btn-cancel" class="btn ghost" data-i18n="form.cancel"></button>
         </div>
         <div id="form-error" class="error hidden"></div>
       </div>
@@ -204,12 +243,12 @@
       <!-- Kernels view -->
       <div id="kernels" class="panel hidden">
         <div class="panel-head">
-          <h2>Kernels</h2>
-          <button id="btn-kernels-close" class="btn ghost">Close</button>
+          <h2 data-i18n="kernels.title"></h2>
+          <button id="btn-kernels-close" class="btn ghost" data-i18n="kernels.close"></button>
         </div>
-        <div class="card-title">Browser engines</div>
+        <div class="card-title" data-i18n="kernels.browserEngines"></div>
         <div id="k-browsers" class="kernel-list"></div>
-        <div class="card-title" style="margin-top:20px">Proxy protocol kernels</div>
+        <div class="card-title" style="margin-top:20px" data-i18n="kernels.proxyKernels"></div>
         <div id="k-protocols" class="kernel-list"></div>
         <pre id="k-log" class="mono json hidden"></pre>
       </div>
@@ -217,15 +256,16 @@
       <!-- Empty state -->
       <div id="empty" class="panel empty">
         <div class="empty-inner">
-          <div class="empty-logo">🦊</div>
-          <p>Select a profile, or create a new one.</p>
-          <button id="btn-new-2" class="btn primary">+ New profile</button>
+          <img class="empty-logo" src="logo.png" alt="" />
+          <p data-i18n="empty.message"></p>
+          <button id="btn-new-2" class="btn primary" data-i18n="topbar.newProfile"></button>
         </div>
       </div>
     </section>
   </main>
 </div>
 
+<script src="i18n.js"></script>
 <script src="transport-web.js"></script>
 <script src="renderer.js"></script>
 </body>

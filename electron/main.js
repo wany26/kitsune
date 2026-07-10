@@ -43,6 +43,7 @@ function createWindow() {
     minHeight: 560,
     title: "Kitsune",
     backgroundColor: "#0f1115",
+    icon: path.join(__dirname, "..", "build", "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
       contextIsolation: true,
@@ -55,9 +56,9 @@ function createWindow() {
 
   win.webContents.on("did-fail-load", (_e, code, desc) => {
     console.error(`renderer failed to load: ${code} ${desc}`);
-    if (process.env.FPB_SMOKE) app.exit(1);
+    if (process.env.KITSUNE_SMOKE) app.exit(1);
   });
-  if (process.env.FPB_SMOKE) {
+  if (process.env.KITSUNE_SMOKE) {
     // Surface any renderer error and give init()'s async IPC time to complete
     // before quitting, so the smoke test actually exercises the UI wiring.
     win.webContents.on("console-message", (_e, level, message) => {
@@ -65,7 +66,7 @@ function createWindow() {
     });
     win.webContents.on("did-finish-load", () => {
       setTimeout(() => {
-        console.log("FPB_SMOKE: renderer loaded OK");
+        console.log("KITSUNE_SMOKE: renderer loaded OK");
         app.quit();
       }, 1500);
     });

@@ -3,7 +3,7 @@
 //  * Browser kernels  -> delegated to Playwright's own downloader
 //    (`playwright install <engine>`), which fetches a pinned, verified build.
 //  * Protocol kernels -> downloaded from the projects' official GitHub releases
-//    into ~/.fingerprint-browser/bin. The proxy bridges prefer these managed
+//    into ~/.kitsune/bin. The proxy bridges prefer these managed
 //    binaries, falling back to whatever is on PATH.
 
 import fs from "node:fs";
@@ -228,7 +228,7 @@ export async function installProtocol(name, onLog = () => {}) {
   if (!asset) throw new Error(`no asset matching "${needle}" in ${def.repo} ${rel.tag_name}`);
 
   onLog(`downloading ${asset.name} (${(asset.size / 1e6).toFixed(1)} MB)…`);
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "fpb-kernel-"));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "kitsune-kernel-"));
   const archive = path.join(tmpDir, asset.name);
   await download(asset.browser_download_url, archive);
 
@@ -254,14 +254,14 @@ export async function installProtocol(name, onLog = () => {}) {
 
 async function githubLatest(repo) {
   const res = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
-    headers: { "User-Agent": "fingerprint-browser", Accept: "application/vnd.github+json" },
+    headers: { "User-Agent": "kitsune", Accept: "application/vnd.github+json" },
   });
   if (!res.ok) throw new Error(`GitHub API ${res.status} for ${repo}`);
   return res.json();
 }
 
 async function download(url, dest) {
-  const res = await fetch(url, { headers: { "User-Agent": "fingerprint-browser" } });
+  const res = await fetch(url, { headers: { "User-Agent": "kitsune" } });
   if (!res.ok) throw new Error(`download ${res.status}: ${url}`);
   const buf = Buffer.from(await res.arrayBuffer());
   fs.writeFileSync(dest, buf);

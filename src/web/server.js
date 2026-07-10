@@ -30,7 +30,7 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const UI_DIR = path.resolve(__dirname, "../../ui");
 
-const MIME = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".json": "application/json" };
+const MIME = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml" };
 
 /** profileId -> { dispose } for every live browser session. */
 const sessions = new Map();
@@ -109,7 +109,7 @@ async function handleApi(req, res, url) {
     if (!prof) return json(res, 404, { error: "profile not found" });
     if (sessions.has(id)) return json(res, 200, { running: true });
     const body = await readBody(req);
-    const { context, dispose } = await launchProfile(prof, { url: body.url, headless: !!process.env.FPB_HEADLESS });
+    const { context, dispose } = await launchProfile(prof, { url: body.url, headless: !!process.env.KITSUNE_HEADLESS });
     sessions.set(id, { dispose });
     context.on("close", () => sessions.delete(id));
     return json(res, 200, { running: true });

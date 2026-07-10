@@ -27,7 +27,7 @@ export async function startShadowsocks(spec) {
     timeout: 300,
   };
 
-  const cfgPath = path.join(os.tmpdir(), `fpb-ss-${localPort}.json`);
+  const cfgPath = path.join(os.tmpdir(), `kitsune-ss-${localPort}.json`);
   fs.writeFileSync(cfgPath, JSON.stringify(config));
 
   const handle = await spawnBridge({

@@ -111,7 +111,7 @@ export async function startV2Ray(spec) {
     outbounds: [buildOutbound(spec)],
   };
 
-  const cfgPath = path.join(os.tmpdir(), `fpb-v2-${localPort}.json`);
+  const cfgPath = path.join(os.tmpdir(), `kitsune-v2-${localPort}.json`);
   fs.writeFileSync(cfgPath, JSON.stringify(config));
 
   // xray and v2ray both accept `run -c <config>`.

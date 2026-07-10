@@ -1,0 +1,16 @@
+{
+  "appId": "com.kitsune.app",
+  "productName": "Kitsune",
+  "artifactName": "${productName}-${version}-${arch}.${ext}",
+  "directories": { "output": "dist", "buildResources": "build" },
+  "files": ["src/**/*", "ui/**/*", "electron/**/*", "package.json"],
+  "asarUnpack": ["**/node_modules/playwright/**", "**/node_modules/playwright-core/**"],
+  "mac": {
+    "icon": "build/icon.icns",
+    "category": "public.app-category.developer-tools",
+    "identity": null,
+    "target": [{ "target": "dmg", "arch": ["arm64"] }]
+  },
+  "win": { "icon": "build/icon.png", "target": ["nsis"] },
+  "linux": { "icon": "build/icon.png", "category": "Network", "target": ["AppImage"] }
+}

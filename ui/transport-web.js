@@ -1,8 +1,8 @@
-// Web transport. Under Electron, window.fpb is already installed by the preload,
-// so this file no-ops. In a plain browser it implements the same interface over
-// the REST API served by src/web/server.js.
+// Web transport. Under Electron, window.kitsune is already installed by the
+// preload, so this file no-ops. In a plain browser it implements the same
+// interface over the REST API served by src/web/server.js.
 
-if (!window.fpb) {
+if (!window.kitsune) {
   const req = async (method, path, body) => {
     const res = await fetch("/api" + path, {
       method,
@@ -28,7 +28,7 @@ if (!window.fpb) {
     } catch (e) {}
   }, 3000);
 
-  window.fpb = {
+  window.kitsune = {
     listProfiles: () => req("GET", "/profiles"),
     createProfile: (opts) => req("POST", "/profiles", opts),
     updateProfile: (id, patch) => req("PUT", `/profiles/${id}`, patch),
@@ -52,7 +52,7 @@ if (!window.fpb) {
 
     openDataDir: async () => {
       const { home } = await req("GET", "/meta");
-      alert("Profiles are stored on the server at:\n" + home);
+      alert(window.KitsuneI18n.t("js.dataDirAlert", { home }));
     },
   };
 }

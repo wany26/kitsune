@@ -1,0 +1,55 @@
+<svg viewBox="183 149 641 656" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fur" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#ffa24d"/>
+      <stop offset="0.55" stop-color="#ff7a2e"/>
+      <stop offset="1" stop-color="#ef5f1c"/>
+    </linearGradient>
+    <linearGradient id="ear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d9491a"/>
+      <stop offset="1" stop-color="#b23a12"/>
+    </linearGradient>
+    <linearGradient id="snout" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffaf4"/>
+      <stop offset="1" stop-color="#ffe6d3"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- fox mark, identical geometry to assets/icon.svg (no background) -->
+  <g transform="rotate(-4 512 512)">
+    <path d="M 216 300
+             L 250 150
+             L 392 320
+             Q 512 400 632 320
+             L 772 180
+             L 808 300
+             C 822 372 820 424 812 480
+             C 800 574 772 638 700 704
+             C 646 752 578 786 512 792
+             C 446 786 378 752 324 704
+             C 252 638 224 574 212 480
+             C 204 424 202 372 216 300 Z" fill="url(#fur)"/>
+
+    <ellipse cx="360" cy="404" rx="150" ry="182" transform="rotate(-18 360 404)" fill="url(#sheen)"/>
+
+    <path d="M 282 224 L 366 314 L 258 298 Z" fill="url(#ear)"/>
+    <path d="M 742 224 L 658 314 L 766 298 Z" fill="url(#ear)"/>
+
+    <path d="M 512 462
+             C 462 462 428 494 418 548
+             C 410 598 442 660 512 706
+             C 582 660 614 598 606 548
+             C 596 494 562 462 512 462 Z" fill="url(#snout)"/>
+
+    <path d="M 344 480 C 376 450 428 450 456 490 C 428 510 384 508 344 480 Z" fill="#141922"/>
+    <path d="M 680 480 C 648 450 596 450 568 490 C 596 510 640 508 680 480 Z" fill="#141922"/>
+    <circle cx="392" cy="470" r="10" fill="#ffffff" fill-opacity="0.92"/>
+    <circle cx="596" cy="470" r="10" fill="#ffffff" fill-opacity="0.92"/>
+
+    <path d="M 512 616 C 548 616 560 626 560 640 C 560 664 538 686 512 692 C 486 686 464 664 464 640 C 464 626 476 616 512 616 Z" fill="#141922"/>
+  </g>
+</svg>

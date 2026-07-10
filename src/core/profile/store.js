@@ -12,12 +12,24 @@ import os from "node:os";
 import crypto from "node:crypto";
 import { defaultProfileExtras, mergeConfig } from "./config.js";
 
-// Storage lives in ~/.kitsune. Existing installs keep their old
-// ~/.fingerprint-browser data so the rename never orphans profiles; FPB_HOME
-// stays supported as an alias for KITSUNE_HOME.
-const LEGACY_HOME = path.join(os.homedir(), ".fingerprint-browser");
-const DEFAULT_HOME = fs.existsSync(LEGACY_HOME) ? LEGACY_HOME : path.join(os.homedir(), ".kitsune");
-const HOME = process.env.KITSUNE_HOME || process.env.FPB_HOME || DEFAULT_HOME;
+// Storage lives in ~/.kitsune (override with KITSUNE_HOME). Installs from before
+// the rename are migrated once, in place: the old ~/.fingerprint-browser
+// directory is moved to ~/.kitsune so nothing is orphaned.
+function resolveHome() {
+  if (process.env.KITSUNE_HOME) return process.env.KITSUNE_HOME;
+  const target = path.join(os.homedir(), ".kitsune");
+  const legacy = path.join(os.homedir(), ".fingerprint-browser");
+  if (!fs.existsSync(target) && fs.existsSync(legacy)) {
+    try {
+      fs.renameSync(legacy, target);
+      process.stderr.write(`[kitsune] migrated data: ${legacy} -> ${target}\n`);
+    } catch (e) {
+      return legacy; // never lose data if the move fails (e.g. cross-device)
+    }
+  }
+  return target;
+}
+const HOME = resolveHome();
 const INDEX = path.join(HOME, "profiles.json");
 const PROFILE_DATA_DIR = path.join(HOME, "profiles");
 

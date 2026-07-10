@@ -1,10 +1,10 @@
 // Preload: the only bridge between the sandboxed renderer and the main process.
-// Exposes a minimal, explicit `window.fpb` API — no direct Node/IPC access leaks
-// into page context (contextIsolation on, nodeIntegration off).
+// Exposes a minimal, explicit `window.kitsune` API — no direct Node/IPC access
+// leaks into page context (contextIsolation on, nodeIntegration off).
 
 const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld("fpb", {
+contextBridge.exposeInMainWorld("kitsune", {
   // profiles
   listProfiles: () => ipcRenderer.invoke("profiles:list"),
   createProfile: (opts) => ipcRenderer.invoke("profiles:create", opts),
