@@ -1,4 +1,4 @@
-# 🦊 Kitsune 狐
+# 🦊 Kitsune -- 轻量化指纹浏览器
 
 [English](README.md) | 简体中文
 
